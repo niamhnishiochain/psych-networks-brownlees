@@ -28,7 +28,7 @@ library(mgm)
 # ---------- 2. Data preparation --------------------------------------------------------
 # ---------------------------------------------------------------------------------------
 
-
+setwd('/Users/benseimon/Documents/Barca GSE/Studies/Term 3/Advanced Techniques/term_paper/psych-networks-brownlees/PTSD_paper')
 data_full<-read.spss("PTSD_data_V1.sav", to.data.frame=TRUE)
 
 # Create data frame of variables that we need for analysis: 
