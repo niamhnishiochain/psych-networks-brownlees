@@ -24,6 +24,7 @@ library(qgraph)
 library(mgm)
 
 
+
 # ---------------------------------------------------------------------------------------
 # ---------- 2. Data preparation --------------------------------------------------------
 # ---------------------------------------------------------------------------------------
@@ -202,3 +203,25 @@ mean3<-mean(abs(graph.m3[upper.tri(graph.m3,diag=FALSE)])); mean3         # 0.09
 graph.m4<-graph.m[-c(1:20),-c(21:27)]  # just connection betw covariates and symptoms
 sum4<-sum(abs(graph.m4[upper.tri(graph.m4,diag=FALSE)])); sum4            # 2.13
 mean4<-mean(abs(graph.m4[upper.tri(graph.m3,diag=FALSE)])); mean4         # 0.02
+
+# ---------------------------------------------------------------------------------------
+# ---------- 7. Network comparison test  ----------------------------------
+# ---------------------------------------------------------------------------------------
+
+
+NCT_cor_auto <- function(data, 
+                         data_ptsd, 
+                         gamma = 0.5, 
+                         it = 100, 
+                         paired=FALSE, 
+                         weighted=TRUE, 
+                         test.edges=TRUE, 
+                         edges, 
+                         progressbar=TRUE,
+                         make.positive.definite=TRUE,
+                         p.adjust.methods="none",
+                         verbose = TRUE)
+
+
+
+
