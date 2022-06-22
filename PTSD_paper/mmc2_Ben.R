@@ -22,7 +22,8 @@ library(bootnet)
 library(qgraph)
 # devtools::install_github("jmbh/mgm")
 library(mgm)
-
+install.packages('NetworkComparisonTest')
+library('NetworkComparisonTest')
 
 
 # ---------------------------------------------------------------------------------------
@@ -101,7 +102,7 @@ colnames(data_ptsd)<-c(1:20)
 colnames(data)<-c(1:27)
 
 network1<-estimateNetwork(data_ptsd, default = "EBICglasso") 
-network2<-estimateNetwork(data, default = "EBICglasso") 
+network2<-estimateNetwork(data, default = "EBICglasso", corMethod = 'cor_auto') #note that the last option was added in order to compute the correlations between ordinal and non-ordinal data (polychoric and polyserial)
 
 # boot1 <- bootnet(network1, nBoots = 1000,  nCores = 4) # edge weights bootstrap network 1 
 # boot2 <- bootnet(network2, nBoots = 1000,  nCores = 4) # edge weights bootstrap network 2
@@ -154,6 +155,8 @@ dev.off()
 
 graph.m <-EBICglasso(data.cor, n = nrow(data))
 
+
+
 pdf("Fig3.pdf", width=10, height=8)
 graph_ptsd.g<-qgraph(data.cor, graph="glasso", layout="spring", sampleSize = nrow(data),
                      vsize=6, cut=0, maximum=.45, minimum=.03, border.width=1.5, border.color="black", 
@@ -163,7 +166,6 @@ dev.off()
 
 # to address reviewer comment::
 sum1<-sum(abs(graph.m[upper.tri(graph.m,diag=FALSE)])); sum1     # 11.88; sum/2 of full network matrix
-
 
 # ---------------------------------------------------------------------------------------
 # ---------- 6. Examine changes upon adding covariates ----------------------------------
@@ -209,18 +211,40 @@ mean4<-mean(abs(graph.m4[upper.tri(graph.m3,diag=FALSE)])); mean4         # 0.02
 # ---------------------------------------------------------------------------------------
 
 
-NCT_cor_auto <- function(data, 
+NCT_and = NCT(data, 
                          data_ptsd, 
-                         gamma = 0.5, 
+                         gamma = 0.5, #same as that used by the paper (see that they use the default EBIC glasso. See bootnet documentation for Estimate Network - tuning - EBICglasso)
                          it = 100, 
-                         paired=FALSE, 
-                         weighted=TRUE, 
-                         test.edges=TRUE, 
-                         edges, 
+                        binary.data = FALSE,
+                         paired=FALSE, #samples are independent
+                         weighted=TRUE,  #compare network weights
+                        AND = TRUE, #authors don't say which they use so we run for both
+              abs = FALSE, #not sure about this one
+                         test.edges=TRUE, #test individual edges
+                         #edges,  #optional list of edges to test
                          progressbar=TRUE,
                          make.positive.definite=TRUE,
-                         p.adjust.methods="none",
+                         p.adjust.methods="none", #not controlling for testing of multiple edges
+              test.centrality = TRUE,
+              centrality = c('betweeness', 'closeness', 'strength'),
+              #nodes, #optional list of nodes to select for testing centrality. 
                          verbose = TRUE)
+
+NCT_or = NCT(network1, 
+              network2, 
+              gamma = 0.5, #same as that used by the paper (see that they use the default EBIC glasso. See bootnet documentation for Estimate Network - tuning - EBICglasso)
+              it = 100, 
+              binary.data = FALSE,
+              paired=FALSE, #samples are independent
+              weighted=TRUE,  #compare network weights
+              AND = FALSE,  #authors don't say which they use so we run for both
+              test.edges=TRUE, #test individual edges
+              #edges,  #optional list of edges to test
+              progressbar=TRUE,
+              make.positive.definite=TRUE,
+              p.adjust.methods="none", #not controlling for testing of multiple edges
+              verbose = TRUE)
+
 
 
 
